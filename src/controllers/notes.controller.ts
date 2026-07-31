@@ -1,4 +1,4 @@
-import type { NextFunction,Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 import { NotesService } from "../services/notes.service.js";
 import { ApiResponse } from "../utils/api-response.js";
@@ -13,6 +13,20 @@ export class NotesController {
       const result = this.notesService.getAll(page, pageSize);
 
       res.json(ApiResponse.success(result));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deleteNote = (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.id);
+
+      const result = this.notesService.deleteNote(id);
+
+      res.status(200).json({
+        data: result,
+      });
     } catch (error) {
       next(error);
     }
