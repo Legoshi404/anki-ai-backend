@@ -1,13 +1,14 @@
 import cors from "cors";
 import express from "express";
 
+// import { delay } from "./middlewares/delay.js";
 import { errorHandler } from "./middlewares/error-handler.js";
 import notesRouter from "./routes/notes.routes.js";
 const app = express();
 
+// app.use(delay(1000));
 app.use(cors());
 app.use(express.json());
-app.use(errorHandler); // last
 
 app.get("/", (_, res) => {
   res.json({
@@ -22,5 +23,7 @@ app.get("/health", (_, res) => {
 });
 
 app.get("/decks/1/cards", notesRouter);
+app.delete("/decks/1/cards/:id", notesRouter);
+app.use(errorHandler); // last
 
 export default app;
