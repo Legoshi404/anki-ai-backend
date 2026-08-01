@@ -31,6 +31,20 @@ export class NotesController {
       next(error);
     }
   };
+
+  updateById = (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.id);
+
+      const result = this.notesService.updateById(id, req.body);
+
+      res.json({
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 function parsePositiveInt(value: unknown, defaultValue: number) {

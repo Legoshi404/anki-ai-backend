@@ -4,7 +4,7 @@ Backend service for an Anki card management application.
 
 The goal of this project is to create an application similar to Anki, but with additional features preferred by the author.
 
-Currently, the application is in active development. At the moment, only flashcard viewing functionality is available.
+Currently, the application is in active development. At the moment, the backend supports basic flashcard management functionality.
 
 ## Features
 
@@ -12,6 +12,8 @@ Currently available:
 
 - Viewing Anki cards
 - Pagination for card lists
+- Editing existing cards
+- Deleting cards
 
 ## Tech Stack
 
