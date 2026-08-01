@@ -1,5 +1,6 @@
 import { AppError } from "../errors/app-error.js";
 import { NotesRepository } from "../repositories/notes.repository.js";
+import type { NoteDto } from "../types/anki.js";
 
 export class NotesService {
   constructor(private readonly notesRepository: NotesRepository) {}
@@ -27,5 +28,15 @@ export class NotesService {
     return {
       id,
     };
+  }
+
+  updateById(id: number, dto: NoteDto) {
+    const note = this.notesRepository.updateById(id, dto);
+
+    if (!note) {
+      throw new AppError("Note not found", 404);
+    }
+
+    return note;
   }
 }

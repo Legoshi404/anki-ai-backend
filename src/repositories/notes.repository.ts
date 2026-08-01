@@ -1,6 +1,8 @@
 import { db } from "../database/anki.database.js";
 import { mapNoteRowToDto } from "../mappers/note.mapper.js";
 import type { AnkiNoteRow, NoteDto } from "../types/anki.js";
+import { parseFields } from "../utils/anki-note.js";
+import { buildNoteUpdate } from "../utils/build-note-update.js";
 
 export class NotesRepository {
   getAll(page: number, pageSize: number): NoteDto[] {
@@ -51,5 +53,79 @@ export class NotesRepository {
     });
 
     return transaction() as boolean;
+  }
+
+  getById(id: number): NoteDto | null {
+    const row = db
+      .prepare(
+        `
+        SELECT
+          id,
+          flds,
+          tags
+        FROM notes
+        WHERE id = ?
+        `,
+      )
+      .get(id) as
+      | {
+          id: number;
+          flds: string;
+          tags: string;
+        }
+      | undefined;
+
+    if (!row) {
+      return null;
+    }
+
+    const { title, content } = parseFields(row.flds);
+
+    return {
+      id: row.id,
+      title,
+      content,
+      tags: row.tags.trim() === "" ? [] : row.tags.trim().split(/\s+/),
+    };
+  }
+
+  updateById(id: number, dto: NoteDto): NoteDto | null {
+    return db.transaction(() => {
+      const note = this.getById(id);
+
+      if (!note) {
+        return null;
+      }
+
+      const { flds, tags, csum, sfld, mod } = buildNoteUpdate(note, dto);
+
+      const result = db
+        .prepare(
+          `
+        UPDATE notes
+        SET
+          flds = ?,
+          tags = ?,
+          sfld = ?,
+          mod = ?,
+          usn = -1
+        WHERE id = ?
+        `,
+        )
+        .run(flds, tags, sfld, csum, mod, id);
+
+      if (result.changes === 0) {
+        return null;
+      }
+
+      db.prepare(
+        `
+          UPDATE cards
+          SET mod = ?
+          WHERE nid = ?`,
+      ).run(mod, id);
+
+      return this.getById(id);
+    })();
   }
 }
