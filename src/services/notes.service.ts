@@ -39,4 +39,14 @@ export class NotesService {
 
     return note;
   }
+
+  getNote(id: number) {
+    const note = this.notesRepository.getById(id);
+
+    if (!note) {
+      throw new AppError("Note not found", 404);
+    }
+
+    return note;
+  }
 }

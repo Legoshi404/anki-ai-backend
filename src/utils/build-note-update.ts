@@ -5,7 +5,7 @@ import { buildFields, calculateChecksum, currentMod } from "./anki-note.js";
 export function buildNoteUpdate(note: NoteDto, dto: NoteDto): NoteUpdate {
   const sfld = dto.title ?? note.title;
   const content = dto.content ?? note.content;
-  const tags = dto.tags ?? note.tags;
+  const tags = (dto.tags ?? note.tags).join(" ");
   const flds = buildFields(sfld, content);
   const csum = calculateChecksum(sfld);
   const mod = currentMod();

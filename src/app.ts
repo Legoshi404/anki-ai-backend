@@ -27,6 +27,7 @@ app.get("/health", (_, res) => {
 });
 
 app.get("/decks/1/cards", notesRouter);
+app.get("/decks/1/cards/:id", validate(idParamSchema, "params"), notesRouter);
 app.delete("/decks/1/cards/:id", notesRouter);
 app.patch(
   "/decks/1/cards/:id",
