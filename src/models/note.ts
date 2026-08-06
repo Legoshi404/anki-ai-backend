@@ -1,6 +1,6 @@
 export interface NoteUpdate {
   flds: string;
-  tags: string[];
+  tags: string;
   sfld: string;
   csum: number;
   mod: number;

@@ -107,6 +107,7 @@ export class NotesRepository {
           flds = ?,
           tags = ?,
           sfld = ?,
+          csum = ?,
           mod = ?,
           usn = -1
         WHERE id = ?

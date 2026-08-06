@@ -45,6 +45,18 @@ export class NotesController {
       next(error);
     }
   };
+
+  getNote = (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = this.notesService.getNote(Number(req.params.id));
+
+      res.json({
+        ...result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 function parsePositiveInt(value: unknown, defaultValue: number) {
