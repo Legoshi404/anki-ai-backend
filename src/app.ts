@@ -35,6 +35,13 @@ app.patch(
   validate(updateNoteSchema),
   notesRouter,
 );
+// AI
+app.post(
+  "/decks/1/cards/:id/improve",
+  validate(idParamSchema, "params"),
+  notesRouter,
+);
+
 app.use(errorHandler); // last
 
 export default app;
