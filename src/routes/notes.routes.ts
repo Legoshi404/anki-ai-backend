@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { notesController } from "../container.js";
+import { aiController, notesController } from "../container.js";
 import { validate } from "../middlewares/validate.js";
 import { idParamSchema } from "../validators/common.validator.js";
 import { updateNoteSchema } from "../validators/note.validator.js";
@@ -19,6 +19,12 @@ router.patch(
   validate(idParamSchema, "params"),
   validate(updateNoteSchema),
   notesController.updateById,
+);
+// AI route
+router.post(
+  "/decks/1/cards/:id/improve",
+  validate(idParamSchema, "params"),
+  aiController.improveNote,
 );
 
 export default router;
