@@ -4,8 +4,12 @@ import express from "express";
 // import { delay } from "./middlewares/delay.js";
 import { errorHandler } from "./middlewares/error-handler.js";
 import { validate } from "./middlewares/validate.js";
+import decksRouter from "./routes/decks.routes.js";
 import notesRouter from "./routes/notes.routes.js";
-import { idParamSchema } from "./validators/common.validator.js";
+import {
+  deckCardIdParamSchema,
+  deckIdParamSchema,
+} from "./validators/common.validator.js";
 import { updateNoteSchema } from "./validators/note.validator.js";
 
 const app = express();
@@ -25,20 +29,34 @@ app.get("/health", (_, res) => {
     status: "OK",
   });
 });
-
-app.get("/decks/1/cards", notesRouter);
-app.get("/decks/1/cards/:id", validate(idParamSchema, "params"), notesRouter);
-app.delete("/decks/1/cards/:id", notesRouter);
+// Decks
+app.get("/decks", decksRouter);
+// Cards
+app.get(
+  "/decks/:deckId/cards",
+  validate(deckIdParamSchema, "params"),
+  notesRouter,
+);
+app.get(
+  "/decks/:deckId/cards/:id",
+  validate(deckCardIdParamSchema, "params"),
+  notesRouter,
+);
+app.delete(
+  "/decks/:deckId/cards/:id",
+  validate(deckCardIdParamSchema, "params"),
+  notesRouter,
+);
 app.patch(
-  "/decks/1/cards/:id",
-  validate(idParamSchema, "params"),
+  "/decks/:deckId/cards/:id",
+  validate(deckCardIdParamSchema, "params"),
   validate(updateNoteSchema),
   notesRouter,
 );
 // AI
 app.post(
-  "/decks/1/cards/:id/improve",
-  validate(idParamSchema, "params"),
+  "/decks/:deckId/cards/:id/improve",
+  validate(deckCardIdParamSchema, "params"),
   notesRouter,
 );
 
