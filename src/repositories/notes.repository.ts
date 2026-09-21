@@ -5,22 +5,42 @@ import { parseFields } from "../utils/anki-note.js";
 import { buildNoteUpdate } from "../utils/build-note-update.js";
 
 export class NotesRepository {
-  getAll(page: number, pageSize: number): NoteDto[] {
+  getAll(deckId: number, page: number, pageSize: number): NoteDto[] {
     const offset = (page - 1) * pageSize;
 
     const notes = db
-      .prepare("SELECT id, flds, tags FROM notes LIMIT ? OFFSET ?")
-      .all(pageSize, offset) as AnkiNoteRow[];
+      .prepare(
+        `
+        SELECT
+          notes.id,
+          notes.flds,
+          notes.tags
+        FROM notes
+        JOIN cards ON cards.nid = notes.id
+        WHERE cards.did = ?
+        LIMIT ? OFFSET ?
+        `,
+      )
+      .all(deckId, pageSize, offset) as AnkiNoteRow[];
 
     return notes.map(mapNoteRowToDto);
   }
 
-  count(): number {
-    const result = db.prepare("SELECT COUNT(*) as total FROM notes").get() as {
-      total: number;
+  count(deckId: number): number {
+    const result = db
+      .prepare(
+        `
+        SELECT COUNT(DISTINCT notes.id) as count
+        FROM notes
+        JOIN cards ON cards.nid = notes.id
+        WHERE cards.did = ?
+      `,
+      )
+      .get(deckId) as {
+      count: number;
     };
 
-    return result.total;
+    return result.count;
   }
 
   deleteById(id: number): boolean {

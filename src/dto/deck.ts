@@ -12,3 +12,8 @@ export interface DeckDto {
   reviewRemaining: number;
   newRemaining: number;
 }
+
+export interface DeckShortDto {
+  id: number;
+  name: string;
+}

@@ -1,5 +1,5 @@
 import { db } from "../database/anki.database.js";
-import type { DeckDto } from "../dto/deck.js";
+import type { DeckDto, DeckShortDto } from "../dto/deck.js";
 
 interface AnkiDeck {
   id: number;
@@ -110,5 +110,30 @@ export class DecksRepository {
         };
       })
       .filter((deck) => deck.id !== 1 || deck.total > 0);
+  }
+
+  getById(id: number): DeckShortDto | null {
+    const row = db.prepare("SELECT decks FROM col LIMIT 1").get() as {
+      decks: string;
+    };
+
+    const decks = JSON.parse(row.decks) as Record<
+      string,
+      {
+        id: number;
+        name: string;
+      }
+    >;
+
+    const deck = decks[String(id)];
+
+    if (!deck) {
+      return null;
+    }
+
+    return {
+      id: deck.id,
+      name: deck.name,
+    };
   }
 }
