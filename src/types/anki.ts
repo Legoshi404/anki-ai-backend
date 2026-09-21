@@ -10,6 +10,7 @@ export interface AnkiNoteRow {
   csum: number;
   flags: number;
   data: string;
+  deckId: number;
 }
 
 export interface NoteDto {

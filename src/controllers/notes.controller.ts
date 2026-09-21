@@ -8,9 +8,10 @@ export class NotesController {
 
   getAll = (req: Request, res: Response, next: NextFunction) => {
     try {
+      const deckId = Number(req.params.deckId);
       const page = parsePositiveInt(req.query.page, 1);
       const pageSize = Math.min(parsePositiveInt(req.query.pageSize, 20), 100);
-      const result = this.notesService.getAll(page, pageSize);
+      const result = this.notesService.getAll(deckId, page, pageSize);
 
       res.json(ApiResponse.success(result));
     } catch (error) {
